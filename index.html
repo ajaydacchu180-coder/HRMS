@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRINIX IT SOLUTIONS Pvt.Ltd</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>TRINIX IT SOLUTIONS</h1>
+                <p>Human Resource Management System</p>
+            </div>
+
+            <div class="role-selector">
+                <div class="role-option" id="role-employee" onclick="selectRole('employee')">
+                    <div class="role-icon">👤</div>
+                    <div class="role-label">Employee</div>
+                </div>
+                <div class="role-option" id="role-manager" onclick="selectRole('manager')">
+                    <div class="role-icon">👔</div>
+                    <div class="role-label">Manager</div>
+                </div>
+                <div class="role-option" id="role-admin" onclick="selectRole('admin')">
+                    <div class="role-icon">⚙️</div>
+                    <div class="role-label">Admin</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+
+            <button class="login-btn" onclick="handleLogin()">Sign In</button>
+
+            <div class="demo-credentials">
+                <strong>Demo Credentials:</strong><br>
+                employee / employee123<br>
+                manager / manager123<br>
+                admin / admin123
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-danger" style="width: 100%;"
+                    onclick="if(confirm('Are you sure you want to reset all data?')) { localStorage.clear(); location.reload(); }">⚠
+                    Reset System Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Dashboard -->
+    <div id="employeeDashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="dashboard-title">Employee Portal</h1>
+            </div>
+            <div class="header-right">
+                <span class="role-badge employee">Employee</span>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <h4 id="userNameDisplay">John Doe</h4>
+                        <p id="userRoleDisplay">Senior Developer</p>
+                    </div>
+                    <div class="user-avatar" id="userAvatarDisplay">JD</div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-nav">
+            <button class="nav-tab active" onclick="switchTab('employee', 'emp-overview')">📊 Overview</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-checkin')">⏰ Check In/Out</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-attendance')">📅 My Attendance</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-leaves')">🏖️ Leave Requests</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-payslip')">💰 Payslip</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-announcements')">📢 Announcements</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-tasks')">📋 My Tasks</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-notifications')">🔔 Notifications</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-chat')" id="empNavChat">💬 Team Chat <span
+                    class="nav-badge" style="display: none;">0</span></button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-holidays')">📅 Holiday Calendar</button>
+            <button class="nav-tab" onclick="switchTab('employee', 'emp-profile')">👤 My Profile</button>
+        </div>
+
+        <div class="dashboard-content">
+            <div id="emp-overview" class="tab-panel active">
+                <h2 class="section-title">Welcome Back! 👋</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Working Days</div>
+                        <div class="stat-value">22</div>
+                        <div class="stat-trend">This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Days Present</div>
+                        <div class="stat-value">20</div>
+                        <div class="stat-trend">+90% Attendance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Leave Balance</div>
+                        <div class="stat-value">15</div>
+                        <div class="stat-trend">Days Remaining</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Requests</div>
+                        <div class="stat-value">2</div>
+                        <div class="stat-trend">Awaiting Approval</div>
+                    </div>
+                </div>
+                <div id="empBirthdaySection" class="birthday-container" style="display: none;"></div>
+                <h3 style="margin-top: 24px;">Quick Actions</h3>
+                <div class="quick-actions">
+                    <div class="action-card" onclick="switchTab('employee', 'emp-checkin')">⏰ Check In/Out</div>
+                    <div class="action-card" onclick="switchTab('employee', 'emp-leaves')">📝 Apply Leave</div>
+                    <div class="action-card" onclick="switchTab('employee', 'emp-payslip')">💰 View Payslip</div>
+                    <div class="action-card" onclick="switchTab('employee', 'emp-attendance')">📊 Attendance Report
+                    </div>
+                </div>
+                <h3 style="margin-top: 24px;">Recent Activity</h3>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="emp-checkin" class="tab-panel">
+                <h2 class="section-title">Check In / Out</h2>
+                <div class="checkin-widget">
+                    <h3>Current Time</h3>
+                    <div class="current-time" id="empCurrentTime">--:--:--</div>
+                    <div class="checkin-status" id="empStatus">Not Checked In</div>
+                    <div class="timer-display" id="empWorkTimer">00:00:00</div>
+                    <div class="break-status" id="empBreakStatus"></div>
+                    <button id="empCheckinBtn" class="checkin-button" onclick="handleCheckin('employee')">Check
+                        In</button>
+                    <button id="empCheckoutBtn" class="checkin-button checked-in" onclick="handleCheckout('employee')"
+                        style="display:none;">Check Out</button>
+                    <div class="break-controls" id="empBreakControls" style="display:none;">
+                        <button class="break-btn" onclick="toggleBreak('employee', 'Meal', 30)">🍔 Meal (30m)</button>
+                        <button class="break-btn" onclick="toggleBreak('employee', 'Tea', 15)">☕ Tea (15m)</button>
+                    </div>
+                    <div id="dailyReportSection" style="display:none; margin-top: 24px;">
+                        <h3>📝 Daily Work Report</h3>
+                        <textarea id="dailyReportText" rows="4" placeholder="Describe your tasks..."></textarea>
+                        <input type="file" id="dailyReportImage" accept="image/*">
+                        <input type="file" id="dailyReportPDFs" accept="application/pdf" multiple>
+                        <button class="btn btn-primary" onclick="submitDailyReport('employee')">Submit Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="emp-attendance" class="tab-panel">
+                <h2>Attendance History</h2>
+            </div>
+            <div id="emp-leaves" class="tab-panel">
+                <h2 class="section-title">Leave Management</h2>
+                <div class="form-section">
+                    <h3>Apply for Leave</h3>
+                    <select id="empLeaveType">
+                        <option>Sick Leave</option>
+                        <option>Casual Leave</option>
+                    </select>
+                    <input type="date" id="empLeaveFrom">
+                    <input type="date" id="empLeaveTo">
+                    <textarea id="empLeaveReason" placeholder="Reason..."></textarea>
+                    <button class="btn btn-primary" onclick="submitLeaveRequest()">Submit</button>
+                </div>
+            </div>
+            <div id="emp-payslip" class="tab-panel">
+                <h2>My Payslip</h2>
+            </div>
+            <div id="emp-announcements" class="tab-panel">
+                <h2>Announcements</h2>
+                <div id="empAnnouncementsList"></div>
+            </div>
+            <div id="emp-tasks" class="tab-panel">
+                <h2>My Tasks</h2>
+                <div class="sub-tab-nav">
+                    <button onclick="switchSubTab('emp', 'tasks')">📋 List</button>
+                    <button onclick="switchSubTab('emp', 'timeline')">📅 Timeline</button>
+                </div>
+                <div id="emp-sub-tasks">
+                    <div class="data-table">
+                        <table>
+                            <tbody id="empTasksTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="emp-sub-timeline" style="display:none;">
+                    <div id="empTimelineContainer"></div>
+                </div>
+            </div>
+            <div id="emp-notifications" class="tab-panel">
+                <h2>Notifications</h2>
+                <div class="data-table">
+                    <table>
+                        <tbody id="empNotificationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="emp-chat" class="tab-panel">
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div id="empChatUserList"></div>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-main-header">
+                            <h3 id="empChatActiveUser">Group Chat</h3>
+                        </div>
+                        <div class="chat-messages-area" id="empChatMessageArea"></div>
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="empChatInput" placeholder="Type..."
+                                onkeypress="handleChatKeyPress(event)">
+                            <button onclick="sendChatMessage()">➤</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="emp-holidays" class="tab-panel">
+                <h2>Holidays</h2>
+                <div class="data-table">
+                    <table>
+                        <tbody id="empHolidayTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="emp-profile" class="tab-panel">
+                <h2>My Profile</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manager Dashboard -->
+    <div id="managerDashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="dashboard-title">Manager Portal</h1>
+            </div>
+            <div class="header-right">
+                <span class="role-badge manager">Manager</span>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <h4>Sarah Williams</h4>
+                        <p>Team Lead</p>
+                    </div>
+                    <div class="user-avatar">SW</div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+        <div class="dashboard-nav">
+            <button class="nav-tab active" onclick="switchTab('manager', 'mgr-overview')">📊 Team Overview</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-team')">👥 Team Members</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-attendance')">📅 Team Attendance</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-checkin')">⏰ My Attendance</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-leaves')">🏖️ Leave Approvals</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-performance')">📈 Performance</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-reports')">📑 Reports</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-tasks')">✅ Tasks</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-notifications')">🔔 Notifications</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-chat')">💬 Team Chat</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-holidays')">📅 Holidays</button>
+            <button class="nav-tab" onclick="switchTab('manager', 'mgr-profile')">👤 My Profile</button>
+        </div>
+        <div class="dashboard-content">
+            <div id="mgr-overview" class="tab-panel active">
+                <h2 class="section-title">Team Activity</h2>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mgrTeamActivityBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="mgr-team" class="tab-panel">
+                <h2>Team Members</h2>
+            </div>
+            <div id="mgr-attendance" class="tab-panel">
+                <h2>Team Attendance</h2>
+            </div>
+            <div id="mgr-checkin" class="tab-panel">
+                <div class="checkin-widget">
+                    <div class="current-time" id="mgrCurrentTime">--:--:--</div>
+                    <div class="checkin-status" id="mgrStatus">Not Checked In</div>
+                    <button class="checkin-button" onclick="handleCheckin('manager')" id="mgrCheckinBtn">Check
+                        In</button>
+                    <button class="checkin-button checked-in" onclick="handleCheckout('manager')" id="mgrCheckoutBtn"
+                        style="display:none;">Check Out</button>
+                    <div id="mgrWorkTimer">00:00:00</div>
+                    <div class="break-status" id="mgrBreakStatus"></div>
+                    <div class="break-controls" id="mgrBreakControls" style="display:none;">
+                        <button class="break-btn" onclick="toggleBreak('manager', 'Meal', 30)">🍔 Meal (30m)</button>
+                        <button class="break-btn" onclick="toggleBreak('manager', 'Tea', 15)">☕ Tea (15m)</button>
+                    </div>
+                    <div id="mgrDailyReportSection" style="display:none;">
+                        <textarea id="mgrDailyReportText"></textarea>
+                        <input type="file" id="mgrDailyReportImage" accept="image/*">
+                        <input type="file" id="mgrDailyReportPDFs" accept="application/pdf" multiple>
+                        <button onclick="submitDailyReport('manager')">Submit Report</button>
+                    </div>
+                </div>
+            </div>
+            <div id="mgr-leaves" class="tab-panel">
+                <h2>Leave Approvals</h2>
+            </div>
+            <div id="mgr-performance" class="tab-panel">
+                <h2>Performance</h2>
+            </div>
+            <div id="mgr-reports" class="tab-panel">
+                <h2>Employee Reports</h2>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Employee</th>
+                                <th>Content</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody id="managerReportsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="mgr-tasks" class="tab-panel">
+                <h2>Tasks Management</h2>
+            </div>
+            <div id="mgr-notifications" class="tab-panel">
+                <h2>Notifications</h2>
+                <div id="mgrNotificationsTableBody"></div>
+            </div>
+            <div id="mgr-chat" class="tab-panel">
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div id="mgrChatUserList"></div>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-messages-area" id="mgrChatMessageArea"></div>
+                        <input type="text" id="mgrChatInput" onkeypress="handleChatKeyPress(event)">
+                        <button onclick="sendChatMessage()">➤</button>
+                    </div>
+                </div>
+            </div>
+            <div id="mgr-holidays" class="tab-panel">
+                <div class="data-table">
+                    <table>
+                        <tbody id="mgrHolidayTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="mgr-profile" class="tab-panel">
+                <h2>My Profile</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="dashboard" style="display: none;">
+        <div class="dashboard-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                <h1 class="dashboard-title">Admin Portal</h1>
+            </div>
+            <div class="header-right">
+                <span class="role-badge admin">Admin</span>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <h4>Robert Anderson</h4>
+                        <p>Administrator</p>
+                    </div>
+                    <div class="user-avatar">RA</div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+        <div class="dashboard-nav">
+            <button class="nav-tab active" onclick="switchTab('admin', 'adm-overview')">📊 Overview</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-employees')">👥 Employees</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-attendance')">📅 Attendance</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-leaves')">🏖️ Leaves</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-payroll')">💰 Payroll</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-announcements')">📢 Announcements</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-reports')">📑 Reports</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-tasks')">✅ Tasks</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-notifications')">🔔 Notifications</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-settings')">⚙️ Settings</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-chat')">💬 Team Chat</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-holidays')">📅 Holidays</button>
+            <button class="nav-tab" onclick="switchTab('admin', 'adm-profile')">👤 My Profile</button>
+        </div>
+        <div class="dashboard-content">
+            <div id="adm-overview" class="tab-panel active">
+                <h2 class="section-title">Global Live Status</h2>
+                <div class="data-table">
+                    <table>
+                        <tbody id="admLiveStatusBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="adm-employees" class="tab-panel">
+                <h2>Employee Management</h2>
+                <div style="margin-bottom: 12px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <input type="text" id="adminSearchEmployee" placeholder="Search employee..."
+                        oninput="searchEmployees()">
+                    <button class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+                </div>
+                <div class="data-table">
+                    <table id="adminEmployeesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="adm-attendance" class="tab-panel">
+                <h2>Attendance Records</h2>
+            </div>
+            <div id="adm-leaves" class="tab-panel">
+                <h2>Leave Management</h2>
+            </div>
+            <div id="adm-payroll" class="tab-panel">
+                <h2>Payroll Management</h2>
+            </div>
+            <div id="adm-announcements" class="tab-panel">
+                <h2>Post Announcements</h2>
+                <div class="form-section">
+                    <input type="text" id="admAnnouncementTitle" placeholder="Announcement title">
+                    <textarea id="admAnnouncementMsg" rows="4" placeholder="Announcement message"></textarea>
+                    <button class="btn btn-primary" onclick="postAnnouncement()">Post Announcement</button>
+                </div>
+            </div>
+            <div id="adm-reports" class="tab-panel">
+                <h2>All Employee Reports</h2>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Employee</th>
+                                <th>Content</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminReportsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="adm-tasks" class="tab-panel">
+                <h2>Global Tasks</h2>
+            </div>
+            <div id="adm-notifications" class="tab-panel">
+                <h2>System Notifications</h2>
+            </div>
+            <div id="adm-settings" class="tab-panel">
+                <h2>System Settings</h2>
+            </div>
+            <div id="adm-chat" class="tab-panel">
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div id="admChatUserList"></div>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-messages-area" id="admChatMessageArea"></div>
+                        <input type="text" id="admChatInput" onkeypress="handleChatKeyPress(event)">
+                        <button onclick="sendChatMessage()">➤</button>
+                    </div>
+                </div>
+            </div>
+            <div id="adm-holidays" class="tab-panel">
+                <div class="form-section" style="margin-bottom:16px;">
+                    <input type="text" id="newHolidayName" placeholder="Holiday name">
+                    <input type="date" id="newHolidayDate">
+                    <button class="btn btn-primary" onclick="addHoliday()">Add Holiday</button>
+                </div>
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admHolidayTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="adm-profile" class="tab-panel">
+                <h2>My Profile</h2>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
