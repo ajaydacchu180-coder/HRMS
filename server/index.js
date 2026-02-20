@@ -54,6 +54,15 @@ app.use('/api', rateLimit({
     legacyHeaders: false,
 }));
 
+// Support legacy requests that target `/auth/*` (without `/api` prefix)
+// by forwarding them to `/api/auth/*`. Mounting at `/auth` makes this
+// forwarding more explicit and reliable when the app is behind a proxy
+// or static asset handlers.
+app.use('/auth', (req, _res, next) => {
+    req.url = '/api' + req.url;
+    next();
+});
+
 function utcDateKey(d = new Date()) {
     return d.toISOString().slice(0, 10);
 }
