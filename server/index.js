@@ -895,12 +895,19 @@ async function startServer() {
     console.log('Connected to MongoDB Atlas');
     await ensureDefaultSeedData();
 
-    if (NODE_ENV === 'production') {
-        const distDir = path.join(__dirname, '..', 'dist');
-        if (fs.existsSync(distDir)) {
-            app.use(express.static(distDir));
-            app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(path.join(distDir, 'index.html')));
-        }
+    // Serve frontend:
+    // - If a production `dist` exists, serve it as a SPA.
+    // - Otherwise fall back to the provided `hrms_role_based_complete.html` UI file
+    //   so the app can be used without a Vite build (convenience for quick deploys).
+    const distDir = path.join(__dirname, '..', 'dist');
+    const uiFile = path.join(__dirname, '..', 'hrms_role_based_complete.html');
+
+    if (fs.existsSync(distDir)) {
+        app.use(express.static(distDir));
+        app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(path.join(distDir, 'index.html')));
+    } else if (fs.existsSync(uiFile)) {
+        // In development or when dist isn't built, serve the provided UI file.
+        app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(uiFile));
     }
 
     app.listen(PORT, () => {
