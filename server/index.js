@@ -902,12 +902,19 @@ async function startServer() {
     const distDir = path.join(__dirname, '..', 'dist');
     const uiFile = path.join(__dirname, '..', 'hrms_role_based_complete.html');
 
-    if (fs.existsSync(distDir)) {
+    // If the project includes the exact UI file you provided, serve it
+    // at the application root so the live site matches your design precisely.
+    if (fs.existsSync(uiFile)) {
+        app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(uiFile));
+        // Also expose static assets from dist if present (so CSS/JS referenced
+        // by the UI can still be served). This allows the provided HTML to
+        // reference `/assets/*` while letting `dist` remain optional.
+        if (fs.existsSync(distDir)) {
+            app.use(express.static(distDir));
+        }
+    } else if (fs.existsSync(distDir)) {
         app.use(express.static(distDir));
         app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(path.join(distDir, 'index.html')));
-    } else if (fs.existsSync(uiFile)) {
-        // In development or when dist isn't built, serve the provided UI file.
-        app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(uiFile));
     }
 
     app.listen(PORT, () => {
